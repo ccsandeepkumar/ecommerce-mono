@@ -1,13 +1,12 @@
 version: 2.1
 
 jobs:
-  run-tests:
+  build-and-test:
     docker:
       - image: cimg/python:3.10
     steps:
       - checkout
 
-      # Check if test files changed
       - run:
           name: Check changed files
           command: |
@@ -31,3 +30,8 @@ jobs:
           name: Run tests
           command: |
             pytest tests/
+
+workflows:
+  test-workflow:
+    jobs:
+      - build-and-test
