@@ -1,3 +1,5 @@
+import time
+
 def test_print_information():
     print("\n===== CI TEST INFORMATION =====")
     print("Test Name : test_print_information")
