@@ -11,16 +11,11 @@ jobs:
       - run:
           name: Check changed files (last commit)
           command: |
-            echo "Detecting files changed in the last commit..."
-
-            # Compare last commit with previous commit
             CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
-
-            echo "Changed files:"
             echo "$CHANGED_FILES"
 
             if echo "$CHANGED_FILES" | grep -q "^tests/"; then
-              echo "Tests changed → continue pipeline"
+              echo "Tests changed → continue"
             else
               echo "No test changes → stopping job"
               circleci-agent step halt
@@ -35,6 +30,7 @@ jobs:
       - run:
           name: Run tests
           command: |
+            export PYTHONPATH=$PWD
             pytest tests/
 
 workflows:
