@@ -1,11 +1,10 @@
+import pytest
 import logging
-import time
 
 logging.basicConfig(level=logging.INFO)
 
+@pytest.mark.testrail(1512)
 def test_payment():
-    logging.info("===== PAYMENT MODULE TEST STARTED =====")
-    logging.info("Executing test_payment")
-    logging.info("Validating payment functionality")
-    logging.info("===== PAYMENT MODULE TEST COMPLETED =====")
+    logging.info("Executing payment test")
+    logging.info("TestRail ID: 1512")
     assert True
