@@ -1,3 +1,2 @@
 tests/catalog/test_catalog.py
 tests/order/test_order.py
-tests/test_info.py
