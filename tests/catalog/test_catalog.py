@@ -1,11 +1,10 @@
+import pytest
 import logging
-import time
 
 logging.basicConfig(level=logging.INFO)
 
+@pytest.mark.testrail(1510)
 def test_catalog():
-    logging.info("===== CATALOG MODULE TEST STARTED =====")
-    logging.info("Executing test_catalog")
-    logging.info("Validating catalog functionality")
-    logging.info("===== CATALOG MODULE TEST COMPLETED =====")
+    logging.info("Executing catalog test")
+    logging.info("TestRail ID: 1510")
     assert True
