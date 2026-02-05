@@ -1,3 +1,7 @@
-# import time
-def test_sample():
-    assert 1 + 1 == 2
+import logging
+
+logging.basicConfig(level=logging.INFO)
+
+def test_logging():
+    logging.info("This will show in logs")
+    assert True
