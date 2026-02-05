@@ -1,2 +1,3 @@
 tests/catalog/test_catalog.py
 tests/order/test_order.py
+tests/payment/test_payment.py
