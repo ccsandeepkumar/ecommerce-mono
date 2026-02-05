@@ -1,3 +1,2 @@
 tests/catalog/test_catalog.py
-tests/payment/test_payment.py
 tests/test_info.py
