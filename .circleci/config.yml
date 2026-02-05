@@ -1,46 +1,57 @@
 version: 2.1
 
 jobs:
-  build-and-test:
+  run-filtered-tests:
     docker:
       - image: cimg/python:3.10
 
     steps:
       - checkout
 
-      # Step 1: Ensure filtered test list exists
+      # STEP 1: Check if filtered_tests.txt changed
       - run:
-          name: Validate filtered test list
+          name: Check filtered_tests.txt change
           command: |
-            if [ ! -f filtered_tests.txt ]; then
-              echo "filtered_tests.txt not found"
+            echo "Checking if filtered_tests.txt changed..."
+
+            CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
+            echo "Changed files:"
+            echo "$CHANGED_FILES"
+
+            if echo "$CHANGED_FILES" | grep -q "^filtered_tests.txt$"; then
+              echo "filtered_tests.txt changed → continue"
+            else
+              echo "filtered_tests.txt NOT changed → stopping job"
               circleci-agent step halt
             fi
 
-            echo "Filtered tests to execute:"
+      # STEP 2: Validate filtered test list
+      - run:
+          name: Validate filtered test list
+          command: |
+            if [ ! -s filtered_tests.txt ]; then
+              echo "filtered_tests.txt is missing or empty"
+              exit 1
+            fi
+
+            echo "Tests selected for execution:"
             cat filtered_tests.txt
 
-      # Step 2: Install dependencies
+      # STEP 3: Install dependencies
       - run:
           name: Install dependencies
           command: |
             python -m pip install --upgrade pip
             pip install -r requirements.txt
 
-      # Step 3: Run ONLY filtered tests
+      # STEP 4: Run ONLY filtered tests
       - run:
-          name: Run filtered test list
+          name: Run filtered tests only
           command: |
             export PYTHONPATH=$PWD
-
-            TEST_FILES=$(cat filtered_tests.txt)
-
-            echo "Executing tests:"
-            echo "$TEST_FILES"
-
-            pytest -s --log-cli-level=INFO $TEST_FILES
+            pytest -s --log-cli-level=INFO $(cat filtered_tests.txt)
 
 workflows:
-  test-workflow:
+  filtered-test-workflow:
     jobs:
-      - build-and-test
+      - run-filtered-tests
