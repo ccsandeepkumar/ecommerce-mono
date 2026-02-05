@@ -8,34 +8,36 @@ jobs:
     steps:
       - checkout
 
-      # Run tests ONLY if a test file changed in the last commit
+      # Step 1: Check whether tests changed in the last commit
       - run:
           name: Check changed files (last commit)
           command: |
-            echo "Detecting files changed in the last commit..."
+            echo "Detecting changed files from last commit..."
             CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
 
             echo "Changed files:"
             echo "$CHANGED_FILES"
 
             if echo "$CHANGED_FILES" | grep -q "^tests/"; then
-              echo "Tests changed → continue pipeline"
+              echo "Tests changed → continuing pipeline"
             else
               echo "No test changes → stopping job"
               circleci-agent step halt
             fi
 
+      # Step 2: Install dependencies
       - run:
           name: Install dependencies
           command: |
             python -m pip install --upgrade pip
             pip install -r requirements.txt
 
+      # Step 3: Run tests with print + logging output visible
       - run:
-          name: Run tests (show print logs)
+          name: Run tests (show print + logging logs)
           command: |
             export PYTHONPATH=$PWD
-            pytest -s tests/
+            pytest -s --log-cli-level=INFO tests/
 
 workflows:
   test-workflow:
