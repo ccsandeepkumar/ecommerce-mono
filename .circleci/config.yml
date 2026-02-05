@@ -4,18 +4,23 @@ jobs:
   build-and-test:
     docker:
       - image: cimg/python:3.10
+
     steps:
       - checkout
 
       - run:
-          name: Check changed files
+          name: Check changed files (last commit)
           command: |
-            git fetch origin main
-            CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
+            echo "Detecting files changed in the last commit..."
+
+            # Compare last commit with previous commit
+            CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
+
+            echo "Changed files:"
             echo "$CHANGED_FILES"
 
             if echo "$CHANGED_FILES" | grep -q "^tests/"; then
-              echo "Tests changed → continue"
+              echo "Tests changed → continue pipeline"
             else
               echo "No test changes → stopping job"
               circleci-agent step halt
@@ -24,6 +29,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
+            python -m pip install --upgrade pip
             pip install -r requirements.txt
 
       - run:
